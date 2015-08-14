@@ -1,6 +1,6 @@
 #STM32F4Discovery
 
-Hello there, this is a repository for STM32F429i Discovery. This repository records my practices. If you have any question or commit, please leave you message or sent to <addischang1991@gmail.com>, thank you so much.
+Hello there, this is a repository for STM32F429i Discovery. It records my programing practices of developing frameware for ARM Cortex M4 CPU. If you have any question or commit, please leave you message or sent to <addischang1991@gmail.com>, thank you so much.
 
 #The MIT license(MIT).
 
