@@ -2,9 +2,7 @@
 
 Hello there, this is a repository for STM32F429i Discovery. This repository records my practices. If you have any question or commit, please leave you message or sent to <addischang1991@gmail.com>, thank you so much.
 
-#The MIT license.
-
-The MIT License (MIT)
+#The MIT license(MIT).
 
 Copyright (c) 2015 Avionics and Flight Simulation Laboratory
 
