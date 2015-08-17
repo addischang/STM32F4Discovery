@@ -94,14 +94,15 @@ INCDIR = lib/CORTEX_M4F_STM32F4 \
 	 lib/CORTEX_M4F_STM32F4/board \
 	 lib/CORTEX_M4F_STM32F4/Libraries/CMSIS/Device/ST/STM32F4xx/Include \
 	 lib/CORTEX_M4F_STM32F4/Libraries/CMSIS/Include \
-	 $(STM32_LIB)/inc \
 	 lib/Utilities/Common \
 	 lib/Utilities/STM32F429I-Discovery \
+	 $(STM32_LIB)/inc \
+
 
 INCLUDES = $(addprefix -I, $(INCDIR))
 
 all:
-	@echo "Using : make clean && make main && make flash"
+	make clean && make main && make flash
 
 main: $(EXECUTABLE)-main
 	@echo "OBJCOPY	$(BIN_IMAGE)"
@@ -115,7 +116,7 @@ main: $(EXECUTABLE)-main
 
 $(EXECUTABLE)-main: $(OUTDIR)/src/main.o $(OBJS)
 	@echo "LD	$@"
-	@$(LD) -o $@ $^ -lm -lc -lnosys -Map=$(MAP_FILE)	$(LDFLAGS)
+	@$(LD) -o $@ $^ -lm -lc -lnosys	-Map=$(MAP_FILE)	$(LDFLAGS)
 
 $(OUTDIR)/%.o: %.c
 	@mkdir -p $(dir $@)

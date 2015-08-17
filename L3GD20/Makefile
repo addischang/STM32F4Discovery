@@ -87,10 +87,6 @@ SRC += $(STM32DISC_LIB)/stm32f429i_discovery.c \
 	$(STM32DISC_LIB)/stm32f429i_discovery_lcd.c \
 	$(STM32DISC_LIB)/stm32f429i_discovery_ioe.c \
 
-#$(STM32DISC_LIB)/stm32f429i_discovery_lcd.c \
-#$(STM32DISC_LIB)/stm32f429i_discovery_sdram.c \
-
-#SRC += lib/Utilities/Common/fonts.c \
 
 OBJS += $(addprefix $(OUTDIR)/,$(patsubst %.s,%.o,$(SRC:.c=.o)))
 
@@ -105,6 +101,8 @@ INCDIR = inc/GPIO \
 
 INCLUDES = $(addprefix -I, $(INCDIR))
 
+all:
+	make clean && make main && make flash
 
 main: $(EXECUTABLE)-main
 	@echo "OBJCOPY	$(BIN_IMAGE)"
@@ -118,7 +116,7 @@ main: $(EXECUTABLE)-main
 
 $(EXECUTABLE)-main: $(OUTDIR)/src/main.o $(OBJS)
 	@echo "LD	$@"
-	@$(LD) -o $@ $^ -Map=$(MAP_FILE)	$(LDFLAGS)
+	@$(LD) -o $@ $^ -lm -lc -lnosys	-Map=$(MAP_FILE)	$(LDFLAGS)
 
 $(OUTDIR)/%.o: %.c
 	@mkdir -p $(dir $@)
