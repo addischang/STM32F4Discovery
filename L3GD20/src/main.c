@@ -57,7 +57,10 @@ void GPIO_Configuration()
 
 void L3GD20_Configuration()
 {
-	// L3GD20 Configuration
+	/*
+	* @brief The L3GD20, 3-Axis MEMS gyroscope, configurations.
+	*
+	*/
 	L3GD20_InitTypeDef L3GD20_InitStructure;
 	L3GD20_InitStructure.Power_Mode = L3GD20_MODE_ACTIVE;
 	L3GD20_InitStructure.Output_DataRate = L3GD20_OUTPUT_DATARATE_1;
@@ -69,14 +72,9 @@ void L3GD20_Configuration()
 	L3GD20_Init(&L3GD20_InitStructure);
 
 	/*
-	// L3GD20 Filter Configuration
-	L3GD20_FilterConfigTypeDef L3GD20Filter_InitStructure;
-	L3GD20Filter_InitStructure.HighPassFilter_Mode_Selection = L3GD20_HPM_NORMAL_MODE;
-	L3GD20Filter_InitStructure.HighPassFilter_CutOff_Frequency = L3GD20_HPFCF_4;
-	L3GD20_FilterConfig(&L3GD20Filter_InitStructure);
+	* @brief The reboot command
+	*		
 	*/
-
-	// L3GD20 Reboot
 	L3GD20_RebootCmd();
 
 }
