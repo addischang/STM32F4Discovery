@@ -8,10 +8,10 @@ MAP_FILE = $(OUTDIR)/$(PROJECT).map
 LIST_FILE = $(OUTDIR)/$(PROJECT).lst
 
 # set the path to STM32F4xx firmware package
-STM32_LIB = lib/CORTEX_M4F_STM32F4/Libraries/STM32F4xx_StdPeriph_Driver
+STM32_LIB = inc/CORTEX_M4F_STM32F4/Libraries/STM32F4xx_StdPeriph_Driver
 
 # set the path to STM32F429I-Discovery firmware package
-STM32DISC_LIB = lib/Utilities/STM32F429I-Discovery
+STM32DISC_LIB = inc/Utilities/STM32F429I-Discovery
 
 # Toolchain configurations
 CROSS_COMPILE ?= arm-none-eabi-
@@ -49,7 +49,7 @@ CFLAGS += -DSTM32F429_439xx
 
 # to run from FLASH
 CFLAGS += -DVECT_TAB_FLASH
-LDFLAGS += -T $(PWD)/lib/CORTEX_M4F_STM32F4/stm32f429zi_flash.ld
+LDFLAGS += -T $(PWD)/inc/CORTEX_M4F_STM32F4/stm32f429zi_flash.ld
 LDFLAGS += -L $(call get_library_path,libc.a)
 LDFLAGS += -L $(call get_library_path,libgcc.a)
 
@@ -64,8 +64,8 @@ SRCDIR += \
 SRC += $(wildcard $(addsuffix /*.c,$(SRCDIR))) \
 	$(wildcard $(addsuffix /*.s,$(SRCDIR)))
 
-SRC += lib/CORTEX_M4F_STM32F4/startup_stm32f429_439xx.s \
-       lib/CORTEX_M4F_STM32F4/startup/system_stm32f4xx.c \
+SRC += inc/CORTEX_M4F_STM32F4/startup_stm32f429_439xx.s \
+       inc/CORTEX_M4F_STM32F4/startup/system_stm32f4xx.c \
 
 SRC += $(STM32_LIB)/src/misc.c \
 	$(STM32_LIB)/src/stm32f4xx_gpio.c \
@@ -90,19 +90,19 @@ SRC += $(STM32DISC_LIB)/stm32f429i_discovery.c \
 
 OBJS += $(addprefix $(OUTDIR)/,$(patsubst %.s,%.o,$(SRC:.c=.o)))
 
-INCDIR = inc/GPIO \
-	 lib/CORTEX_M4F_STM32F4 \
-	 lib/CORTEX_M4F_STM32F4/board \
-	 lib/CORTEX_M4F_STM32F4/Libraries/CMSIS/Device/ST/STM32F4xx/Include \
-	 lib/CORTEX_M4F_STM32F4/Libraries/CMSIS/Include \
-	 $(STM32_LIB)/inc \
-	 lib/Utilities/Common \
-	 lib/Utilities/STM32F429I-Discovery \
+INCDIR = $(STM32_LIB)/inc \
+	inc/ \
+	inc/CORTEX_M4F_STM32F4 \
+	inc/CORTEX_M4F_STM32F4/board \
+	inc/CORTEX_M4F_STM32F4/Libraries/CMSIS/Device/ST/STM32F4xx/Include \
+	inc/CORTEX_M4F_STM32F4/Libraries/CMSIS/Include \
+	inc/Utilities/Common \
+	inc/Utilities/STM32F429I-Discovery \
 
 INCLUDES = $(addprefix -I, $(INCDIR))
 
 all:
-	make clean && make main && make flash
+	@echo "Using:make clean && make main && make flash"
 
 main: $(EXECUTABLE)-main
 	@echo "OBJCOPY	$(BIN_IMAGE)"

@@ -1,13 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include "stm32f4xx.h"
-#include "stm32f4xx_gpio.h"
-#include "stm32f4xx_syscfg.h"
-#include "stm32f429i_discovery.h"
-#include "stm32f429i_discovery_lcd.h"
-#include "stm32f429i_discovery_ioe.h"
+#include "main.h"
 
 void RCC_Configuration()
 {
@@ -79,8 +70,6 @@ void ILI9341_Show()
     LCD_DisplayStringLine(LCD_LINE_8, (uint8_t*)str_output_buffer); 
 
 }
-
-
 
 int main()
 {

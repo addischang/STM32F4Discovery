@@ -1,16 +1,45 @@
-#include "stm32f4xx.h"
-#include "stm32f4xx_gpio.h"
-#include "stm32f4xx_syscfg.h"
-#include "stm32f429i_discovery.h"
-#include "stm32f429i_discovery_l3gd20.h"
-#include "stm32f429i_discovery_lcd.h"
-#include "stm32f429i_discovery_ioe.h"
+/**
+  ******************************************************************************
+  * @file    main.c
+  * @author  Chang, Wei-Chieh
+  * @version V1.0.0
+  * @date    17-Augest-2015
+  * @brief   This main file to read gyroscope value. 
+  ******************************************************************************
+  * @license
+  *
+  * The MIT License
+  *
+  * Copyright (c) 2015 Avionics and Flight Simulation Laboratory
+  *
+  * Permission is hereby granted, free of charge, to any person obtaining a copy 
+  * of this software and associated documentation files (the "Software"), to deal 
+  * in the Software without restriction, including without limitation the rights 
+  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+  * of the Software, and to permit persons to whom the Software is furnished to do so, 
+  * subject to the following conditions:
+  *
+  * The above copyright notice and this permission notice shall be included in all 
+  * copies or substantial portions of the Software.
+  *
+  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+  * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR 
+  * PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE 
+  * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, 
+  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE 
+  * OR OTHER DEALINGS IN THE SOFTWARE.
+  *
+  ******************************************************************************
+  */
+
+#include "main.h"
 
 void RCC_Configuration()
 {
 	// RCC Configuration
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOG, ENABLE);
 }
+
 
 void GPIO_Configuration()
 {
@@ -25,6 +54,7 @@ void GPIO_Configuration()
 	GPIO_Init(GPIOG, &GPIO_InitStructure);
 }
 
+
 void L3GD20_Configuration()
 {
 	// L3GD20 Configuration
@@ -38,13 +68,19 @@ void L3GD20_Configuration()
 	L3GD20_InitStructure.Full_Scale = L3GD20_FULLSCALE_250;
 	L3GD20_Init(&L3GD20_InitStructure);
 
+	/*
 	// L3GD20 Filter Configuration
 	L3GD20_FilterConfigTypeDef L3GD20Filter_InitStructure;
 	L3GD20Filter_InitStructure.HighPassFilter_Mode_Selection = L3GD20_HPM_NORMAL_MODE;
 	L3GD20Filter_InitStructure.HighPassFilter_CutOff_Frequency = L3GD20_HPFCF_4;
 	L3GD20_FilterConfig(&L3GD20Filter_InitStructure);
+	*/
+
+	// L3GD20 Reboot
+	L3GD20_RebootCmd();
 
 }
+
 
 void ILI9341_Configuration()
 {
@@ -54,49 +90,48 @@ void ILI9341_Configuration()
   	*	 	 configurations.
   	*/ 
 	LCD_Init();
-	IOE_Config();
 	LTDC_Cmd( ENABLE );
 	LCD_LayerInit();
 	LCD_SetLayer(LCD_FOREGROUND_LAYER );
 	LCD_Clear(LCD_COLOR_BLACK );
-	LCD_SetTextColor(LCD_COLOR_RED );
+	LCD_SetTextColor(LCD_COLOR_BLACK );
+
+}
 
 
+void ILI9341_Show()
+{
+	uint8_t tmpreg;
+	tmpreg = L3GD20_GetDataStatus();
 	/** 
   	* @brief Display String
   	* 		 
   	*/ 
+
+	char str_convert_buffer[16];
+	char str_output_buffer[32];
+
 	LCD_DisplayStringLine(LCD_LINE_1, (uint8_t *)"WELCOME TO TKU");
-	LCD_DisplayStringLine(LCD_LINE_2, (uint8_t *)"ASFL");
-	LCD_DisplayStringLine(LCD_LINE_4, (uint8_t *)"X: ");
-	LCD_DisplayStringLine(LCD_LINE_5, (uint8_t *)"Y: ");
-	LCD_DisplayStringLine(LCD_LINE_6, (uint8_t *)"Z: ");
+    LCD_DisplayStringLine(LCD_LINE_2, (uint8_t *)"ASFL");
 
-}
+	strcpy(str_output_buffer, "X-AXIS:");
+    sprintf(str_convert_buffer, "%d", tmpreg );
+    strcat(str_output_buffer, str_convert_buffer); 
+    LCD_ClearLine(LCD_LINE_6);
+    LCD_DisplayStringLine(LCD_LINE_6, (uint8_t*)str_output_buffer); 
 
-static char* itoa(int value, char* result, int base)
-{
-	if (base < 2 || base > 36) {
-		*result = '\0';
-		return result;
-	}
-	char *ptr = result, *ptr1 = result, tmp_char;
-	int tmp_value;
+	strcpy(str_output_buffer, "Y-AXIS:");
+    sprintf(str_convert_buffer, "%d", 10 );
+    strcat(str_output_buffer, str_convert_buffer); 
+    LCD_ClearLine(LCD_LINE_7);
+    LCD_DisplayStringLine(LCD_LINE_7, (uint8_t*)str_output_buffer); 
 
-	do {
-		tmp_value = value;
-		value /= base;
-		*ptr++ = "zyxwvutsrqponmlkjihgfedcba9876543210123456789abcdefghijklmnopqrstuvwxyz" [35 + (tmp_value - value * base)];
-	} while (value);
+   	strcpy(str_output_buffer, "Z-AXIS:");
+    sprintf(str_convert_buffer, "%d", 10 );
+    strcat(str_output_buffer, str_convert_buffer); 
+    LCD_ClearLine(LCD_LINE_8);
+    LCD_DisplayStringLine(LCD_LINE_8, (uint8_t*)str_output_buffer); 
 
-	if (tmp_value < 0) *ptr++ = '-';
-	*ptr-- = '\0';
-	while (ptr1 < ptr) {
-		tmp_char = *ptr;
-		*ptr-- = *ptr1;
-		*ptr1++ = tmp_char;
-	}
-	return result;
 }
 
 int main()
@@ -111,10 +146,12 @@ int main()
 
 	while(1)
 	{
+		ILI9341_Show();
+
 		GPIO_ToggleBits(GPIOG, GPIO_Pin_13);
 		GPIO_ToggleBits(GPIOG, GPIO_Pin_14);
 
-		for(int i=0; i<500000; i++);
+		for(int i=0; i<1000000; i++);
 	}
 
 	return 0;
