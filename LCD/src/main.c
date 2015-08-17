@@ -1,3 +1,7 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "stm32f4xx.h"
 #include "stm32f4xx_gpio.h"
 #include "stm32f4xx_syscfg.h"
@@ -33,42 +37,70 @@ void ILI9341_Configuration()
   	*	 	 configurations.
   	*/ 
 	LCD_Init();
-	IOE_Config();
 	LTDC_Cmd( ENABLE );
 	LCD_LayerInit();
 	LCD_SetLayer(LCD_FOREGROUND_LAYER );
 	LCD_Clear(LCD_COLOR_BLACK );
-	LCD_SetTextColor(LCD_COLOR_RED );
+	LCD_SetTextColor(LCD_COLOR_BLACK );
 
+}
+
+
+void ILI9341_Show()
+{
 
 	/** 
   	* @brief Display String
   	* 		 
   	*/ 
-	{
-		LCD_DisplayStringLine(LCD_LINE_2, (uint8_t *)"WELCOME TO TKU");
-		LCD_DisplayStringLine(LCD_LINE_3, (uint8_t *)"ASFL");
-	}
-	
+
+	char str_convert_buffer[16];
+	char str_output_buffer[32];
+
+	LCD_DisplayStringLine(LCD_LINE_1, (uint8_t *)"WELCOME TO TKU");
+    LCD_DisplayStringLine(LCD_LINE_2, (uint8_t *)"ASFL");
+
+	strcpy(str_output_buffer, "X-AXIS:");
+    sprintf(str_convert_buffer, "%4.2f",10.0 );
+    strcat(str_output_buffer, str_convert_buffer); 
+    LCD_ClearLine(LCD_LINE_6);
+    LCD_DisplayStringLine(LCD_LINE_6, (uint8_t*)str_output_buffer); 
+
+	strcpy(str_output_buffer, "Y-AXIS:");
+    sprintf(str_convert_buffer, "%4.2f", 12.0 );
+    strcat(str_output_buffer, str_convert_buffer); 
+    LCD_ClearLine(LCD_LINE_7);
+    LCD_DisplayStringLine(LCD_LINE_7, (uint8_t*)str_output_buffer); 
+
+   	strcpy(str_output_buffer, "Z-AXIS:");
+    sprintf(str_convert_buffer, "%4.2f", 14.0 );
+    strcat(str_output_buffer, str_convert_buffer); 
+    LCD_ClearLine(LCD_LINE_8);
+    LCD_DisplayStringLine(LCD_LINE_8, (uint8_t*)str_output_buffer); 
+
 }
+
+
 
 int main()
 {
 	RCC_Configuration();
 	GPIO_Configuration();
-	ILI9341_Configuration(1);
-
+	ILI9341_Configuration();
+	ILI9341_Show();
 	// Demo Code: switch flashing two LED 
 	GPIO_ToggleBits(GPIOG, GPIO_Pin_14);
 
 	while(1)
 	{
+		//show();
 		GPIO_ToggleBits(GPIOG, GPIO_Pin_13);
 		GPIO_ToggleBits(GPIOG, GPIO_Pin_14);
 
-		for(int i=0; i<500000; i++);
+		for(int i=0; i<10000000; i++);
 	}
 
 	return 0;
 
 }
+

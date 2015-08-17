@@ -7,15 +7,15 @@ HEX_IMAGE = $(OUTDIR)/$(PROJECT).hex
 MAP_FILE = $(OUTDIR)/$(PROJECT).map
 LIST_FILE = $(OUTDIR)/$(PROJECT).lst
 
-# set the path to STM32F4xx firmware package
+# Set the path to STM32F4xx firmware package
 STM32_LIB = lib/CORTEX_M4F_STM32F4/Libraries/STM32F4xx_StdPeriph_Driver
 
-# set the path to STM32F429I-Discovery firmware package
+# Set the path to STM32F429I-Discovery firmware package
 STM32DISC_LIB = lib/Utilities/STM32F429I-Discovery
 
 # Toolchain configurations
 CROSS_COMPILE ?= arm-none-eabi-
-CC = $(CROSS_COMPILE)gcc
+CC = $(CROSS_COMPILE)gcc-4.8
 LD = $(CROSS_COMPILE)ld
 OBJCOPY = $(CROSS_COMPILE)objcopy
 OBJDUMP = $(CROSS_COMPILE)objdump
@@ -87,15 +87,10 @@ SRC += $(STM32DISC_LIB)/stm32f429i_discovery.c \
 	$(STM32DISC_LIB)/stm32f429i_discovery_lcd.c \
 	$(STM32DISC_LIB)/stm32f429i_discovery_ioe.c \
 
-#$(STM32DISC_LIB)/stm32f429i_discovery_lcd.c \
-#$(STM32DISC_LIB)/stm32f429i_discovery_sdram.c \
-
-#SRC += lib/Utilities/Common/fonts.c \
 
 OBJS += $(addprefix $(OUTDIR)/,$(patsubst %.s,%.o,$(SRC:.c=.o)))
 
-INCDIR = inc/GPIO \
-	 lib/CORTEX_M4F_STM32F4 \
+INCDIR = lib/CORTEX_M4F_STM32F4 \
 	 lib/CORTEX_M4F_STM32F4/board \
 	 lib/CORTEX_M4F_STM32F4/Libraries/CMSIS/Device/ST/STM32F4xx/Include \
 	 lib/CORTEX_M4F_STM32F4/Libraries/CMSIS/Include \
@@ -120,12 +115,12 @@ main: $(EXECUTABLE)-main
 
 $(EXECUTABLE)-main: $(OUTDIR)/src/main.o $(OBJS)
 	@echo "LD	$@"
-	@$(LD) -o $@ $^ -Map=$(MAP_FILE)	$(LDFLAGS)
+	@$(LD) -o $@ $^ -lm -lc -lnosys -Map=$(MAP_FILE)	$(LDFLAGS)
 
 $(OUTDIR)/%.o: %.c
 	@mkdir -p $(dir $@)
 	@echo "CC	$@"
-	@$(CC) $(CFLAGS) -c $(INCLUDES) $< -o $@
+	@$(CC) $(CFLAGS)  -c $(INCLUDES)  $< -o $@
 
 $(OUTDIR)/%.o: %.s
 	@mkdir -p $(dir $@)
