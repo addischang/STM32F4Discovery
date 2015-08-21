@@ -7,15 +7,15 @@ HEX_IMAGE = $(OUTDIR)/$(PROJECT).hex
 MAP_FILE = $(OUTDIR)/$(PROJECT).map
 LIST_FILE = $(OUTDIR)/$(PROJECT).lst
 
-# set the path to STM32F4xx firmware package
+# Set the path to STM32F4xx firmware package
 STM32_LIB = inc/CORTEX_M4F_STM32F4/Libraries/STM32F4xx_StdPeriph_Driver
 
-# set the path to STM32F429I-Discovery firmware package
+# Set the path to STM32F429I-Discovery firmware package
 STM32DISC_LIB = inc/Utilities/STM32F429I-Discovery
 
 # Toolchain configurations
 CROSS_COMPILE ?= arm-none-eabi-
-CC = $(CROSS_COMPILE)gcc
+CC = $(CROSS_COMPILE)gcc-4.8
 LD = $(CROSS_COMPILE)ld
 OBJCOPY = $(CROSS_COMPILE)objcopy
 OBJDUMP = $(CROSS_COMPILE)objdump
@@ -98,6 +98,8 @@ INCDIR = $(STM32_LIB)/inc \
 	inc/CORTEX_M4F_STM32F4/Libraries/CMSIS/Include \
 	inc/Utilities/Common \
 	inc/Utilities/STM32F429I-Discovery \
+	 
+
 
 INCLUDES = $(addprefix -I, $(INCDIR))
 
@@ -121,7 +123,7 @@ $(EXECUTABLE)-main: $(OUTDIR)/src/main.o $(OBJS)
 $(OUTDIR)/%.o: %.c
 	@mkdir -p $(dir $@)
 	@echo "CC	$@"
-	@$(CC) $(CFLAGS) -c $(INCLUDES) $< -o $@
+	@$(CC) $(CFLAGS)  -c $(INCLUDES)  $< -o $@
 
 $(OUTDIR)/%.o: %.s
 	@mkdir -p $(dir $@)
